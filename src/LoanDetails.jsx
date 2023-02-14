@@ -18,7 +18,7 @@ class LoanDetails extends React.Component {
           <div class="input-field"></div>
           <h5>Interest rate per year</h5>
           <div class="input-field"></div>
-          <button>Calculate</button>
+          <button class="btn-primary">Calculate</button>
         </div>
       </div>
     );
