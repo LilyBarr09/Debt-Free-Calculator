@@ -54,11 +54,47 @@ button:not(:disabled):not(.disabled) {
 .btn-primary,
 .btn-primary a {
   color: rgb(82, 81, 81);
-  background-color: #b4f8c8;
-  border-color: #b4f8c8;
-  border-radius: 50rem;
+  background-color: #C2E2F5;
+  border-color: #C2E2F5;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #3a3cb4;
+  background: linear-gradient(90deg, #3a3cb4, #1dc1fd);
+  font-family: "Montserrat", sans-serif
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: .5rem auto
+}
+
+.main-page {
+  background: #4B7BF5;
+  margin: 0;
+  color: #3a3e47;
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.main-div {
+  background-color: #79A9F5;
 }
 
 input {
   border: solid 2px rgb(82, 81, 81);
+  border-radius: 5px;
+  color: #D8D7D5;
+
 }
