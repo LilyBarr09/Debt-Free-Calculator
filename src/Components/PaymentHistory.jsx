@@ -13,7 +13,7 @@ class PaymentHistory extends React.Component {
               <p>${payment}</p>
             ))}
           </p>
-          <h3>Running Balance: ${mainState.newBalance}</h3>
+          <h3>Running Balance: ${mainState.balance}</h3>
         </div>
       </div>
     );

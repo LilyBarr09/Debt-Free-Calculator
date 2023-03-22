@@ -12,48 +12,60 @@ class App extends React.Component {
     numberOfPayments: "",
     payment: 0,
     paymentHistory: [],
-    newBalance: 0,
   };
   baseState = this.state;
-
-  // handleSubmit = (e) => {
-  //   e.preventDefault();
-  // };
 
   handleChange = ({ target: { name, value } }) => {
     this.setState({ [name]: value }, () => this.calculateMinimumLoanPayment());
   };
 
-  calculateInterest = () => {
-    const { interestRate, balance } = this.state;
-    let interestToDecimal = +interestRate / 100;
-    let monthlyInterest = (interestToDecimal / 12) * +balance;
-    this.setState({ interestAmount: monthlyInterest });
-  };
-
   calculateMinimumLoanPayment = () => {
-    const { balance, interestAmount } = this.state;
+    const { balance, interestRate } = this.state;
     let principal = +balance * 0.01;
-    let minPayment = (principal + +interestAmount).toFixed(2);
-    this.setState({ minimumLoanPayment: minPayment });
-    this.calculateInterest();
+    let interest = (+interestRate / 1200) * +balance;
+    let minPayment = (principal + interest).toFixed(2);
+    this.setState({
+      minimumLoanPayment: +minPayment,
+      interestAmount: +interest,
+    });
     this.howManyPayments();
   };
 
   howManyPayments = () => {
-    const { balance, minimumLoanPayment } = this.state;
-    let debtFree = (+balance / +minimumLoanPayment).toFixed(0);
+    const { balance, minimumLoanPayment, interestAmount } = this.state;
+    let applyToBalance = +minimumLoanPayment - +interestAmount;
+    let debtFree = (+balance / applyToBalance).toFixed(0);
     this.setState({ numberOfPayments: +debtFree });
   };
 
-  submitPayment = () => {
-    const { balance, interestAmount, paymentHistory, payment } = this.state;
-    +paymentHistory.push(+payment);
-    let applyToBalance = +payment - +interestAmount;
-    let runningBalance = (+balance - applyToBalance).toFixed(2);
-    this.setState({
-      newBalance: +runningBalance,
-    });
+  submitPayment = (e) => {
+    e.preventDefault();
+    const {
+      balance,
+      interestAmount,
+      paymentHistory,
+      payment,
+      minimumLoanPayment,
+    } = this.state;
+    if (
+      +payment >= +minimumLoanPayment &&
+      +payment > 0 &&
+      (+payment <= +balance + +interestAmount || +payment <= +balance)
+    ) {
+      let applyToBalance = +payment - +interestAmount;
+      let runningBalance = (+balance - applyToBalance).toFixed(2);
+      this.setState(
+        {
+          balance: +runningBalance,
+          paymentHistory: [...paymentHistory, +payment],
+        },
+        () => this.calculateMinimumLoanPayment()
+      );
+    } else {
+      alert(
+        "Payment is less than the 1% minimum required or more than the balance due."
+      );
+    }
   };
 
   resetState = () => {
@@ -65,18 +77,20 @@ class App extends React.Component {
       {
         name: "balance",
         label: "Loan Amount",
-        placeholder: "Enter Amount",
+        // placeholder: "Enter Amount",
+        value: this.state.balance,
       },
       {
         name: "interestRate",
         label: "Interest Rate",
-        placeholder: "Enter Interest Rate",
+        // placeholder: "Enter Interest Rate",
+        value: this.state.interestRate,
       },
       {
         name: "payment",
         label: "Payment Amount",
-        placeholder: "Enter Payment Amount",
-        // value: this.state.payment,
+        // placeholder: "Enter Payment Amount",
+        value: this.state.payment,
       },
     ];
     return (
@@ -100,8 +114,8 @@ class App extends React.Component {
                     <input
                       type="number"
                       name={name}
-                      placeholder={placeholder}
-                      // value={value && value}
+                      // placeholder={placeholder}
+                      value={value && value}
                       onChange={this.handleChange}
                     />
                   </form>
