@@ -77,19 +77,16 @@ class App extends React.Component {
       {
         name: "balance",
         label: "Loan Amount",
-        // placeholder: "Enter Amount",
         value: this.state.balance,
       },
       {
         name: "interestRate",
         label: "Interest Rate",
-        // placeholder: "Enter Interest Rate",
         value: this.state.interestRate,
       },
       {
         name: "payment",
-        label: "Payment Amount",
-        // placeholder: "Enter Payment Amount",
+        label: "Make A Payment",
         value: this.state.payment,
       },
     ];
