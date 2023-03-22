@@ -10,13 +10,11 @@ class App extends React.Component {
     interestAmount: 0,
     minimumLoanPayment: 0,
     numberOfPayments: "",
-    paymentHistory: [
-      {
-        payment: 0,
-        newBalance: 0,
-      },
-    ],
+    payment: 0,
+    paymentHistory: [],
+    newBalance: 0,
   };
+  baseState = this.state;
 
   // handleSubmit = (e) => {
   //   e.preventDefault();
@@ -49,46 +47,36 @@ class App extends React.Component {
   };
 
   submitPayment = () => {
-    const { balance, interestAmount, paymentHistory } = this.state;
-    const { payment } = paymentHistory;
-    +payment.push(+payment);
+    const { balance, interestAmount, paymentHistory, payment } = this.state;
+    +paymentHistory.push(+payment);
     let applyToBalance = +payment - +interestAmount;
     let runningBalance = (+balance - applyToBalance).toFixed(2);
-    // if (runningBalance <= 100) {
-    //   this.minimumLoanPayment = paymentHistory.newBalance + +interestAmount;
-    // }
-    this.setState({ payment: applyToBalance, newBalance: +runningBalance });
+    this.setState({
+      newBalance: +runningBalance,
+    });
   };
 
-  // resetState = () => {
-  //   this.setState({
-  //     balance: 0,
-  //     interestRate: 0,
-  //     interestAmount: 0,
-  //     minimumLoanPayment: 0,
-  //     payment: 0,
-  //     numberOfPayments: "",
-  //     paymentHistory: [],
-  //   });
-  // };
+  resetState = () => {
+    this.setState(this.baseState);
+  };
 
   render() {
     const inputsData = [
       {
         name: "balance",
         label: "Loan Amount",
-        placeholder: "50000",
+        placeholder: "Enter Amount",
       },
       {
         name: "interestRate",
         label: "Interest Rate",
-        placeholder: "2.5",
+        placeholder: "Enter Interest Rate",
       },
       {
         name: "payment",
         label: "Payment Amount",
-        placeholder: "Enter Amount",
-        value: this.state.paymentHistory.payment,
+        placeholder: "Enter Payment Amount",
+        // value: this.state.payment,
       },
     ];
     return (
@@ -113,7 +101,7 @@ class App extends React.Component {
                       type="number"
                       name={name}
                       placeholder={placeholder}
-                      value={value && value}
+                      // value={value && value}
                       onChange={this.handleChange}
                     />
                   </form>

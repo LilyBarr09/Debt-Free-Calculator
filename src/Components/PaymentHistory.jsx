@@ -7,16 +7,13 @@ class PaymentHistory extends React.Component {
       <div>
         <div className="payment-history-container">
           <h3>Payment History</h3>
-          {mainState.paymentHistory.map((history) => {
-            const { payment, newBalance } = history;
-            return (
-              <ul>
-                <li>Payment: {payment}</li>
-                <li>Running Balance {newBalance}</li>
-              </ul>
-            );
-          })}
-          ;
+          <p>
+            Payment:
+            {mainState.paymentHistory.map((payment) => (
+              <p>${payment}</p>
+            ))}
+          </p>
+          <h3>Running Balance: ${mainState.newBalance}</h3>
         </div>
       </div>
     );
