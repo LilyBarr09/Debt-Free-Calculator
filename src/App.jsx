@@ -132,7 +132,10 @@ class App extends React.Component {
           </div>
 
           <div className="main-div">
-            <PaymentPlanInfo mainState={this.state} />
+            <PaymentPlanInfo
+              minPayment={this.state.minimumLoanPayment}
+              numOfPayments={this.state.numberOfPayments}
+            />
           </div>
           <div className="main-div">
             <PaymentHistory mainState={this.state} />
