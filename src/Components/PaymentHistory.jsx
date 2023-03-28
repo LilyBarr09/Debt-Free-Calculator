@@ -2,18 +2,18 @@ import React from "react";
 
 class PaymentHistory extends React.Component {
   render() {
-    const { mainState } = this.props;
+    const { pH, bal } = this.props.data;
     return (
       <div>
         <div className="payment-history-container">
           <h3>Payment History</h3>
-          <p>
+          <div>
             Payment:
-            {mainState.paymentHistory.map((payment) => (
-              <p>${payment}</p>
+            {pH.map((payment) => (
+              <p key={payment}>${payment}</p>
             ))}
-          </p>
-          <h3>Running Balance: ${mainState.balance}</h3>
+          </div>
+          <h3>Running Balance: ${bal}</h3>
         </div>
       </div>
     );

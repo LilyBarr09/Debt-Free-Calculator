@@ -15,27 +15,58 @@ class App extends React.Component {
   };
   baseState = this.state;
 
+  updateValues = (balance, interestRate) => {
+    let principal = +balance * 0.01;
+    let interest = (+interestRate / 1200) * +balance;
+    let minPayment = +(principal + interest).toFixed(2);
+    let numberOfPayments = this.howManyPayments(
+      this.state.balance,
+      this.state.minimumLoanPayment,
+      this.state.interestAmount
+    );
+    return {
+      minimumLoanPayment: +minPayment,
+      interestAmount: +interest,
+      numberOfPayments: +numberOfPayments,
+    };
+  };
+
   handleChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value }, () => this.calculateMinimumLoanPayment());
+    let obj = { [name]: +value };
+    if (name === "balance") {
+      obj = {
+        ...obj,
+        ...this.updateValues(+value, this.state.interestRate),
+      };
+    } else if (name === "interestRate") {
+      obj = {
+        ...obj,
+        ...this.updateValues(+value, this.state.balance),
+      };
+    }
+    this.setState(obj);
   };
 
   calculateMinimumLoanPayment = () => {
     const { balance, interestRate } = this.state;
     let principal = +balance * 0.01;
     let interest = (+interestRate / 1200) * +balance;
-    let minPayment = (principal + interest).toFixed(2);
+    let minPayment = +(principal + interest).toFixed(2);
+    let numberOfPayments = this.howManyPayments(
+      this.state.balance,
+      this.state.minimumLoanPayment,
+      this.state.interestAmount
+    );
     this.setState({
       minimumLoanPayment: +minPayment,
       interestAmount: +interest,
+      numberOfPayments: +numberOfPayments,
     });
-    this.howManyPayments();
   };
 
-  howManyPayments = () => {
-    const { balance, minimumLoanPayment, interestAmount } = this.state;
+  howManyPayments = (balance, minimumLoanPayment, interestAmount) => {
     let applyToBalance = +minimumLoanPayment - +interestAmount;
-    let debtFree = (+balance / applyToBalance).toFixed(0);
-    this.setState({ numberOfPayments: +debtFree });
+    return (+balance / applyToBalance).toFixed(0);
   };
 
   submitPayment = (e) => {
@@ -54,13 +85,11 @@ class App extends React.Component {
     ) {
       let applyToBalance = +payment - +interestAmount;
       let runningBalance = (+balance - applyToBalance).toFixed(2);
-      this.setState(
-        {
-          balance: +runningBalance,
-          paymentHistory: [...paymentHistory, +payment],
-        },
-        () => this.calculateMinimumLoanPayment()
-      );
+
+      this.setState({
+        balance: +runningBalance,
+        paymentHistory: [...paymentHistory, +payment],
+      });
     } else {
       alert(
         "Payment is less than the 1% minimum required or more than the balance due."
@@ -90,6 +119,21 @@ class App extends React.Component {
         value: this.state.payment,
       },
     ];
+
+    const btnList = [
+      { id: 1, label: "Submit", action: this.submitPayment },
+      { id: 2, label: "Reset", action: this.resetState },
+    ];
+
+    const secondaryComponents = [
+      <PaymentPlanInfo
+        minPayment={this.state.minimumLoanPayment}
+        numOfPayments={this.state.numberOfPayments}
+      />,
+      <PaymentHistory
+        data={{ pH: this.state.paymentHistory, bal: this.state.balance }}
+      />,
+    ];
     return (
       <div className="App">
         <div className="calculator-title">
@@ -100,46 +144,39 @@ class App extends React.Component {
           <div className="main-div">
             <div>
               <h3>Enter Loan Details</h3>
-              {inputsData.map((input) => {
-                const { name, label, placeholder, value } = input;
-                return (
-                  <form>
-                    <label>{label}</label>
+              <form>
+                {inputsData.map((input) => {
+                  const { name, label, placeholder, value } = input;
+                  return (
+                    <div key={name}>
+                      <label>{label}</label>
+                      <br />
+                      <input
+                        type="number"
+                        name={name}
+                        value={value && value}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                  );
+                })}
+              </form>
 
-                    <br />
-
-                    <input
-                      type="number"
-                      name={name}
-                      // placeholder={placeholder}
-                      value={value && value}
-                      onChange={this.handleChange}
-                    />
-                  </form>
-                );
-              })}
-
-              <button className="btn-primary" onClick={this.submitPayment}>
-                Submit
-              </button>
-
-              <br></br>
-
-              <button className="btn-primary" onClick={this.resetState}>
-                Reset
-              </button>
+              {btnList.map((btn) => (
+                <button
+                  className="btn-primary"
+                  onClick={btn.action}
+                  key={btn.id}
+                >
+                  {btn.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="main-div">
-            <PaymentPlanInfo
-              minPayment={this.state.minimumLoanPayment}
-              numOfPayments={this.state.numberOfPayments}
-            />
-          </div>
-          <div className="main-div">
-            <PaymentHistory mainState={this.state} />
-          </div>
+          {secondaryComponents.map((comp) => (
+            <div className="main-div">{comp}</div>
+          ))}
         </header>
       </div>
     );
